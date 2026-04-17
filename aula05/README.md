@@ -96,3 +96,56 @@ class Pessoa {
 const pessoa = Pessoa("Sarah", 18);
 alert(pessoa.apresentar());
 ~~~
+
+## Seleção e Manipulação de Elementos
+- **getElementById():** Seleciona elemento por ID
+
+- **getElementsByClassName():** Seleciona elementos por classe
+
+- **querySelector():** Usa seletores CSS para encontrar elementos
+
+- **innerHTML:** Modifica o conteúdo HTML
+
+- **style:** Altera estilos CSS
+
+## Eventos no JavaScript
+### Eventos de Mouse
+> click, dblclick, mouseover, mouseout controlam interações com ponteiro.
+
+### Eventos de Formulário
+> submit, change, input monitoram alterações em formulários.
+
+### Eventos de Teclado
+> keydown, keyup, keypress capturam interações via teclado.
+
+~~~html
+<button id="btn">Clique aqui</button>
+<script>
+    document.getElementById("btn").addEventListenere("click", () => {
+        alert("Botão clicado");
+    });
+</script>
+~~~
+~~~html
+<input type="text" id="campo">
+<p id="resultado"></p>
+<script>
+    document.getElementById("campo").addEventListenere("keyup", () => {
+        let valor = document.getElementById("campo").value;
+        document.getElementById("resultado").innerText = valor;
+    });
+</script>
+~~~
+
+## Introdução às Requisições Assíncronas
+- **Requisição:** JavaScript envia solicitações ao servidor Django sem interromper a navegação.
+- **Processamento:**  Servidor processa a requisição e prepara os dados para resposta.
+- **Resposta:** Dados retornam ao navegador, geralmente em formato JSON.
+- **Atualização:** JavaScript atualiza a página sem recarregamento completo.
+
+<img width="780" height="400" alt="image" src="https://github.com/user-attachments/assets/f1740a76-ca1d-419c-bd3b-61d8cb775646" />
+
+- **Operações Síncronas vs. Assíncronas:** JavaScript executa código de forma assíncrona. Não bloqueia durante operações demoradas.
+- **XMLHttpRequest:** Método tradicional para requisições. Ainda usado mas menos elegante.
+- **Fetch API:** Interface moderna baseada em Promises. Mais simples e poderosa.
+- **Promises:** Representam operações futuras. Permitem manipular resultados quando disponíveis.
