@@ -138,6 +138,9 @@ alert(pessoa.apresentar());
 ~~~
 
 ## Introdução às Requisições Assíncronas
+- **Objetivo:** Enviar uma resposta sem recarregar a página
+
+### Processo
 - **Requisição:** JavaScript envia solicitações ao servidor Django sem interromper a navegação.
 - **Processamento:**  Servidor processa a requisição e prepara os dados para resposta.
 - **Resposta:** Dados retornam ao navegador, geralmente em formato JSON.
@@ -145,7 +148,24 @@ alert(pessoa.apresentar());
 
 <img width="780" height="400" alt="image" src="https://github.com/user-attachments/assets/f1740a76-ca1d-419c-bd3b-61d8cb775646" />
 
+
+
 - **Operações Síncronas vs. Assíncronas:** JavaScript executa código de forma assíncrona. Não bloqueia durante operações demoradas.
 - **XMLHttpRequest:** Método tradicional para requisições. Ainda usado mas menos elegante.
 - **Fetch API:** Interface moderna baseada em Promises. Mais simples e poderosa.
 - **Promises:** Representam operações futuras. Permitem manipular resultados quando disponíveis.
+
+# Fetch API
+- A Fetch API no JavaScript permite realizar requisições HTTP assíncronas para carregar dados de APIs de forma simples usando Promises
+- A estrutura básica usa fetch(url) seguida de .then() para processar a resposta.
+- Promises: São objetos JavaScript que representam o sucesso ou a falha de uma requisição HTTP assíncrona.
+- O método fetch() inicia a busca de um recurso e retorna imediatamente uma Promise, permitindo que o código continue executando enquanto aguarda a resposta (pendente), evitando travamentos
+~~~javascript
+// Chamadas encadeadas
+fetch('https://api.exemplo.com/dados') // retorna um obj do tipo fetch que tem por natureza o método .then
+  .then(response => response.json()) // retorna um obj do tipo fetch
+  .then(data => console.log(data))
+  .catch(error => console.error('Erro:', error));
+~~~
+
+<img width="1400" height="864" alt="image" src="https://github.com/user-attachments/assets/ba4668b6-4c51-4d2a-84a5-471894e5884b" />
