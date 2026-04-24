@@ -160,6 +160,8 @@ alert(pessoa.apresentar());
 - A estrutura básica usa fetch(url) seguida de .then() para processar a resposta.
 - Promises: São objetos JavaScript que representam o sucesso ou a falha de uma requisição HTTP assíncrona.
 - O método fetch() inicia a busca de um recurso e retorna imediatamente uma Promise, permitindo que o código continue executando enquanto aguarda a resposta (pendente), evitando travamentos
+
+> Endpoint: Uma URL específica em uma API que recebe/envia dados
 ~~~javascript
 // Chamadas encadeadas
 fetch('https://api.exemplo.com/dados') // retorna um obj do tipo fetch que tem por natureza o método .then
@@ -169,3 +171,56 @@ fetch('https://api.exemplo.com/dados') // retorna um obj do tipo fetch que tem p
 ~~~
 
 <img width="1400" height="864" alt="image" src="https://github.com/user-attachments/assets/ba4668b6-4c51-4d2a-84a5-471894e5884b" />
+
+#### Método para requisição que devolve HTML
+~~~javascript
+function carregarResultadoIMC(event) {
+    event.preventDefault(); // Impede o envio do formulário padrão, senão ele geraria um reload da página
+    const url_requisicao_post = document.getElementById('url_requisicao').dataset.url_post //Captura qual é a URL que deve ser requisitada
+    // vai receber a url e um dict com as informações da requisição, como método, cabeçalho e corpo da requisição
+    fetch(url_requisicao_post,{ // Usando a API fetch para fazer a requisição POST, colocando o cabecalho correto e o corpo da requisição
+        method: 'POST', // tipo do método
+        headers: { //Cabeçalho da requisição com o tipo de conteúdo e o token CSRF para segurança
+            "Content-Type": "application/json", // especifica o tipo conteúdo da requisição
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value // captura o token CRSF que está no HTML. Conteúdo obrigatório
+        },
+        // body: conteúdo do forms, nesse contexto
+        body: JSON.stringify({ //O JSON.stringify converte o objeto JavaScript em uma string JSON, a partir dos valores dos campos do formulário
+            peso: document.getElementById('peso').value,
+            altura: document.getElementById('altura').value
+        })
+    })
+    // quando o fetch() for concluído, retorne a resposta
+        .then(response => response.text()) // O then espera a resposta do servidor e quando ela chegar, converte para texto
+        .then(data => { // O segundo then recebe o texto retornado e atualiza o conteúdo do elemento com id 'resultado_imc'
+            document.getElementById('resultado').innerHTML = data; // data: dados recebidos
+            console.log(data);
+        })
+        .catch(error => { // Caso ocorra algum erro na requisição, ele será capturado aqui
+            console.error('Erro ao carregar resultado IMC:', error);
+            window.alert("Ocorreu um erro ao calcular o IMC. Por favor, tente novamente.",error);
+        });
+}
+~~~
+
+
+#### Fluxo do código
+~~~mermaid
+graph TD
+    A[Usuário clica no botão Enviar] --> B[event.preventDefault]
+    B --> C[Captura URL do dataset]
+    C --> D[Captura Valores: Peso, Altura e Token CSRF]
+    
+    subgraph Fetch_API [Requisição HTTP POST]
+        D --> E[JSON.stringify: Transforma dados em String]
+        E --> F[Envia Fetch para o Servidor]
+        F --> G{Servidor Responde?}
+    end
+
+    G -- Sucesso (200 OK) --> H[.then: Converte resposta para texto]
+    H --> I[Atualiza innerHTML do #resultado_imc]
+    I --> J[Fim do Processo]
+
+    G -- Falha (Erro de Rede/Servidor) --> K[.catch: Captura Erro]
+    K --> L[Exibe Alerta de Erro e Console.error]
+~~~
