@@ -224,3 +224,31 @@ graph TD
     G -- Falha (Erro de Rede/Servidor) --> K[.catch: Captura Erro]
     K --> L[Exibe Alerta de Erro e Console.error]
 ~~~
+
+## HTMX + Django
+- O HTMX é uma biblioteca JavaScript leve (~14kb) que permite adicionar comportamentos dinâmicos diretamente no HTML, usando atributos especiais
+- Tecnologia utilizada do lado do cliente
+
+>[!TIP]
+> O servidor retorna HTML pronto. O HTMX injeta diretamente no elemento alvo — sem JavaScript extra
+~~~html
+<button
+ hx-get="/lista/" -> acessa essa view por essa rota
+ hx-target="#lista"> -> entrega o HTML renderizado nessa view
+ Carregar
+</button>
+~~~
+
+- HTMX intercepta eventos do usuário (clique, digitação, envio de forms) e faz requisições HTTP
+- A resposta é HTML puro que é inserido diretamente na página
+
+<img width="677" height="374" alt="image" src="https://github.com/user-attachments/assets/6c12867f-246f-4378-8307-7c0612db8017" /><br>
+> Exemplo visual
+
+### Tags HTMX
+- **hx-get:** Faz uma requisição GET quando o elemento é acionado
+- **hx-post:** Envia um formulário via POST sem recarregar a página
+- **hx-target:** Define qual elemento HTML receberá o conteúdo retornado
+- **hx-swap:** Controla como o conteúdo é inserido no elemento alvo
+- **hx-trigger:** Define qual evento dispara a requisição (padrão: click)
+- **hx-indicator:** Mostra um indicador de carregamento durante a requisição
