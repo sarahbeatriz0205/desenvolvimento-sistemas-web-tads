@@ -124,3 +124,43 @@ python manage.py migrate
 ~~~bash
 python manage.py sqlmigrate nome_model 0001
 ~~~
+
+## API Gerada pelo Django
+
+> [!TIP]
+> Forma de interação com a API pelo shell
+~~~bash
+python manage.py shell
+~~~
+
+- Quando passamos o manage.py, o ambiente do shell é configurado com as informações do projeto
+- Podemos interagir com a API de acesso a banco de dados gerada para dar suporte as classes de modelo
+
+> [!TIP]
+> O comando abaixo me oferece mais recursos para desenvolver
+~~~bash
+pip install django_extensions
+~~~
+
+> [!TIP]
+> Esse comando me permite manipular meus modelos pelo shell. É oferecido pelo **django_extensions** 
+~~~bash
+python manage.py shell_plus
+~~~
+
+> [!TIP]
+> Criando um elemento dentro do banco de dados por meio do shell e usando os recursos da ORM do Django
+
+> [!IMPORTANT]
+> Esse processo salva o elemento apenas na memória! É necessário chamar o método **.save()** para salvar
+<img width="358" height="216" alt="image" src="https://github.com/user-attachments/assets/7f2f3310-e4f6-4e58-bbbb-514f0d5f2407" /><br>
+
+> [!TIP]
+> Pegando um dado do banco pela sua chave primária (pk) e também modificando o dado a que essa pk pertence
+<img width="481" height="250" alt="image" src="https://github.com/user-attachments/assets/c258b498-a6ed-44cc-8396-87e3760da8c5" /><br>
+
+> [!TIP]
+> Criando um filtro de busca que captura os objetos (dados) de raça que contenham a palavra "lata"
+~~~bash
+animais_lata = Animal.objects.filter(raca__nome__contains='lata')
+~~~
