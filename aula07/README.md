@@ -164,3 +164,14 @@ python manage.py shell_plus
 ~~~bash
 animais_lata = Animal.objects.filter(raca__nome__contains='lata')
 ~~~
+
+> [!TIP]
+> Em cada aplicação criada, vem um arquivo **admin.py**. Ele serve exclusivamente para realizar operações de CRUD dos models
+
+<img width="530" height="216" alt="image" src="https://github.com/user-attachments/assets/c325d12a-e5b2-4377-800c-6195329496a3" />
+
+## Uso básico dos models com views e templates
+
+> Função na view para listar todos os tipos de animais
+
+<img width="686" height="198" alt="image" src="https://github.com/user-attachments/assets/d03b56c6-d181-4d11-84b8-0152b613364f" />
