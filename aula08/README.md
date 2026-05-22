@@ -88,3 +88,88 @@ from django.conf.urls.static import static
 ~~~python
 foto = models.ImageField(upload_to="animais/media/", blank=True, null=True)
 ~~~
+
+## Herança de Modelo
+- **Toda classe de modelo é subclasse de** ```django.db.models.Model```
+
+### Alternativas para herança em classes de modelo:
+**1. Herdar de uma superclasse de modelo abstrata.**
+**2. Herdar a partir de uma outra classe de modelo.**
+**3. Utilizar “proxy” de modelos, para alterar o comportamento de um modelo sem afetar seus dados.**
+**4. Os exemplos a seguir não usam em sua totalidade o projeto do adocato, mas poderia ser possível**
+
+### Herdar de uma classe abstrata
+- Úteis para definir atributos base para uma série de outras classes de modelo
+~~~python
+class CommonInfo(models.Model):
+  name = models.CharField(max_length=100)
+  age = models.PositiveIntegerField()
+
+  class Meta: # define que a classe é abstrata e não deve ser criada no banco de dados
+    abstract = True
+
+class Student(CommonInfo):
+  home_group = models.CharField(max_length=5)
+~~~
+
+### Herdar de uma outra Classe de Modelo
+- **Cada classes da hierarquia será mapeada em uma tabela específica no banco de dados (multi-table)**
+- **A herança gera um link entre a classe “filha” e seus “pais”**
+~~~python
+class Place(models.Model):
+  name = models.CharField(max_length=50)
+  address = models.CharField(max_length=50)
+
+class Restaurant(Place):
+  server_hot_dogs = models.BooleanField(defaut=False)
+  server_pizza = models.BooleanField(defaut=False)
+~~~
+- **Se um dado “Place” também for um “Restaurant”, a partir um objeto “Place” é possível acessar a instância**
+
+#### Relacionamento 1 para 1:
+~~~python
+place_pointer = models.OneToOneField(Place, on_delete=models.CASCADE, parent_link=True, primary_key=True,)
+~~~
+
+## Modelos de usuário
+~~~python
+from django.db import models
+from django.contrib.auth.models import User
+
+class Usuario(User):
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=11)
+    tipo = models.CharField(max_length=20, choices=[('Abrigo', 'Abrigo'), ('Adotante', 'Adotante')]) # choices: quando tiver enum no diagrama de domínio, é bom usar
+
+    def __str__(self):
+        return self.nome
+
+class Perfil(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='usuarios/avatares/', null=True, blank=True)
+    bio = models.TextField()
+    comprovanteEndereco = models.FileField(upload_to='usuarios/comprovantes/', null=True, blank=True)
+
+    def __str__(self):
+        return f"Perfil de {self.usuario.nome}"
+~~~
+
+> [!TIP]
+> **abstract = True** faz com que o modelo não seja criado no banco de dados, mas seus atributos podem refletir em modelos que herdam de uma classe que o contenha. Não permite criar uma instância dessa classe
+
+> [!TIP]
+> **proxy = True** faz com que o modelo não seja criado no banco de dados, mas permite a criação de um objeto dela
+
+## Relacionamentos
+### Muitos para muitos
+~~~python
+class DocumentoAdocao(models.Model):
+  processo_adocao = models.ForeignKey(ProcessoAdocao, on_delete=models.CASCADE, related_name='documentos')
+  descricao = models.CharField(max_length=100)
+  enviadoem = models.DateTimeField(auto_now_add=True)
+  arquivo = models.FileField(upload_to='adocao/documentos/')
+
+  def __str__(self):
+    return f"Documento: {self.descricao} para
+    {self.processo_adocao}
+~~~
