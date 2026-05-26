@@ -43,6 +43,7 @@ NULL PRIMARY KEY AUTOINCREMENT, "nome" varchar(50) NOT NULL);
 
 ## Atributos de Classes de Modelo
 - **Definição de atributos é obrigatória**
+- **objects: realiza o gerenciamento das entidades. Permite acesso a partir das instâncias e não diretamente das classes**
 ~~~python
 class Animal(models.Model):
   nome = models.CharField(max_length=100)
@@ -158,10 +159,13 @@ class Perfil(models.Model):
 > **abstract = True** faz com que o modelo não seja criado no banco de dados, mas seus atributos podem refletir em modelos que herdam de uma classe que o contenha. Não permite criar uma instância dessa classe
 
 > [!TIP]
+> **verbose_name_plural = "nome_plural"** serve para formatar o nome dos atributos no admin do Django
+
+> [!TIP]
 > **proxy = True** faz com que o modelo não seja criado no banco de dados, mas permite a criação de um objeto dela
 
 ## Relacionamentos
-### Muitos para muitos
+### Um para muitos
 ~~~python
 class DocumentoAdocao(models.Model):
   processo_adocao = models.ForeignKey(ProcessoAdocao, on_delete=models.CASCADE, related_name='documentos')
@@ -173,3 +177,42 @@ class DocumentoAdocao(models.Model):
     return f"Documento: {self.descricao} para
     {self.processo_adocao}
 ~~~
+
+### Muitos para muitos
+**ManyToManyField é feita nos objetos que serão editados em formulário**
+
+<img width="811" height="642" alt="image" src="https://github.com/user-attachments/assets/97d17efb-7712-43a6-b3ee-4e1e47ce394e" />
+
+~~~python
+class ProcessoAdocao(models.Model):
+    STATUS_CHOICES = [
+    ('EM_ANALISE', 'Em Análise'),
+    ('APROVADA', 'Aprovada'),
+    ('REPROVADA', 'Reprovada'),
+    ]
+    adotante = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='processos_adocao_adotante')
+    avaliador = models.ForeignKey(Usuario, on_delete=models.SET_NULL,
+    null=True, blank=True, related_name='processos_adocao_avaliador')
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name='processos_adocao')
+    criadaem= models.DateTimeField(auto_now_add=True)
+    atualizadaem = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='EM_ANALISE')
+    comentarios=models.ManyToManyField(Usuario, blank=True, through='Comentario',related_name='comentarios_usuario') # through: indica por qual classe ele deve passar para chegar no objetivo
+
+    def __str__(self):
+      return f"Processo de Adoção: {self.adotante.nome} - {self.animal.nome} ({self.status})"
+
+# === CLASSE ASSOCIATIVA === #
+class Comentario(models.Model):
+    processo_adocao = models.ForeignKey(ProcessoAdocao,
+    on_delete=models.CASCADE, related_name='comentarios_processo')
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE,
+    related_name='comentarios_autor')
+    texto = models.TextField()
+    realizadoem = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comentário de {self.autor.nome} em {self.realizadoem.strftime('%Y-%m-%d %H:%M:%S')}"
+~~~
+
+- **No diagrama acima, existe un relacionamento muitos para muitos entre ProcessoAdocao e Usuario. Nesse relacionamento, existe a classe associativa Comentário, que possui atributos que dependem das classes as quais existe a ligação citada anteriormente. Por isso, é necessário criar a classe associativa do diagrama**
